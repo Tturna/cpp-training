@@ -87,14 +87,8 @@ void handle_connection(int cli_sock_filedesc)
 
         if (error)
         {
-            string response = "http/1.1 400 Bad Request\n";
-            int send_status = send(cli_sock_filedesc, response.c_str(), sizeof(response), 0);
-            error = check_error(send_status, 0);
-
-            if (error)
-            {
-                return;
-            }
+            send_http_status(cli_sock_filedesc, 400);
+            return;
         }
 
         request.append(buffer);
@@ -220,6 +214,11 @@ void send_http_status(int cli_sock_filedesc, int http_status)
     {
         status_line = "HTTP/1.1 500 Internal Server Error\n";
         content = "<!DOCTYPE html><html>500 Internal Server Error</html>";
+    }
+    else if (http_status == 400)
+    {
+        status_line = "HTTP/1.1 400 Bad Request\n\n";
+        content = "<!DOCTYPE html><html>400 Bad Request</html>";
     }
     else if (http_status == 404)
     {
