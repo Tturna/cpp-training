@@ -10,6 +10,7 @@
 #include <netinet/in.h>
 #include <iostream>
 #include <unistd.h>
+#include <thread>
 
 using namespace std;
 using namespace filesystem;
@@ -47,7 +48,10 @@ int main()
         if (error) continue;
 
         cout << "---- Connection accepted\n";
-        handle_connection(cli_sock_filedesc);
+
+        thread new_thread(handle_connection, cli_sock_filedesc);
+        new_thread.detach();
+        //handle_connection(cli_sock_filedesc);
     }
 
     return 0;
